@@ -1,6 +1,7 @@
 import React ,{Component } from "react";
 import {Card,Form,Button} from "react-bootstrap";
 
+
 export default class Login extends Component{
 
     constructor(props){
@@ -21,8 +22,9 @@ export default class Login extends Component{
 
     formSubmit(event){
         event.preventDefault();
-        console.log(this.state.email);
-        console.log(this.state.password);
+        // console.log(this.state.email);
+        // console.log(this.state.password);
+        this.props.history.push("/home");
 
     }
 
