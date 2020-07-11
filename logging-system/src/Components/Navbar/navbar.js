@@ -19,7 +19,7 @@ function NavBar(){
                         </NavLink>
                     </NavItem>
                     <NavItem >
-                        <NavLink className="nav-link mx-4" exact to = "/request">
+                        <NavLink className="nav-link mx-4" exact to = "/home/requests">
                             Request
                         </NavLink>
                     </NavItem>

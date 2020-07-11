@@ -30,7 +30,7 @@ export default class Login extends Component{
 
     render(){
         return (
-            <div className="bg-primary container-fluid " style={{height:"100vh"}}>
+            <div className="container-fluid " style={{height:"100vh",backgroundImage: `linear-gradient(135deg, #000000 5%, #115E6780 90%), url(${"assets/images/bg.jpg"}) `, backgroundSize:"cover"}}>
                 <div className="row  justify-content-center ">
                     <div className="col-10 col-md-6 col-xl-4"> 
                         <Card style={{top:"20vh", borderRadius:"10px",

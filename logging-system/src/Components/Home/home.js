@@ -18,11 +18,11 @@ export default class Home extends Component{
     render(){
         return (
             <div>
-                
+                <NavBar/>
                 <Switch>
                     <Route exact path="/home" component={Catlog}/>
                     
-                    <Route path='/requests' component={Request}/>
+                    <Route path='/home/requests' component={Request}/>
 
                     <Redirect to="/home"/>
                 </Switch>
