@@ -4,6 +4,7 @@ import Switch from "react-bootstrap/esm/Switch";
 import { Route,Redirect } from "react-router-dom";
 import Catlog from "../Catlog/catlog";
 import Request from '../Request/request';
+import Send from "../Send/send";
 
 export default class Home extends Component{
 
@@ -23,7 +24,7 @@ export default class Home extends Component{
                     <Route exact path="/home" component={Catlog}/>
                     
                     <Route path='/home/requests' component={Request}/>
-
+                    <Route path='/home/send' component={Send}/>
                     <Redirect to="/home"/>
                 </Switch>
             </div>

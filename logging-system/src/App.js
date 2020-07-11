@@ -17,7 +17,7 @@ function App() {
         
         {/* <Route path='/request' component={Request}/> */}
 {/* Set this to login*/}
-        <Redirect to="/login"/> 
+        <Redirect to="/home"/> 
       </Switch>
     </BrowserRouter>
   );
