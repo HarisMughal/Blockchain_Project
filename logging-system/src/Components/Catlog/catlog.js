@@ -39,8 +39,9 @@ export default class Catlog extends Component{
     constructor(props){
         super(props);
         this.state = {
-            isModlaOpen: false,
-
+            isModalOpen: false,
+            data_id:0,
+            user_id:0,
             description : "",
             
         };
@@ -51,12 +52,13 @@ export default class Catlog extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
         this.formChange = this.formChange.bind(this);
         
-;    };
+    };
 
-    onToggleModal(){
+    onToggleModal(id){
         this.setState(
             {
-                isModlaOpen: !this.state.isModlaOpen
+                data_id:id,
+                isModalOpen: !this.state.isModalOpen
                 
             }
             
@@ -65,8 +67,15 @@ export default class Catlog extends Component{
     }
 
     handleSubmit(event){
+        // console.log("Insert");
         event.preventDefault();
-        // console.log(this.state.file);
+        if(this.state.data_id == -1){
+            console.log("Insert");
+        }else{
+            console.log("Upldate");
+        }
+        
+        console.log(this.state);
     }
 
     formChange(e){
@@ -111,9 +120,9 @@ export default class Catlog extends Component{
                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description}</td>
                     
                     <td>
-                        <i className="fa fa-trash" aria-hidden="true" style={{fontSize:"20px", color:"red"}}
+                        <i className="fa fa-trash" aria-hidden="true" style={{fontSize:"20px", color:"red",cursor:"pointer"}}
                           onClick={this.onRowDel}  ></i>
-                        <i className="fa fa-upload ml-3" aria-hidden="true" onClick={this.onToggleModal}></i> 
+                        <i className="fa fa-upload ml-3" aria-hidden="true"  style={{cursor:"pointer"}} onClick={()=>this.onToggleModal(row.id)}></i> 
 
                     </td>
                 </tr>
@@ -123,10 +132,10 @@ export default class Catlog extends Component{
             <div className="container mt-5">
                 <div className="d-flex p-2 " >
                     
-                    <Button outline color="primary" className="ml-auto" onClick={this.onToggleModal}>
+                    <Button outline color="primary" className="ml-auto" onClick={()=>this.onToggleModal(-1)}>
                         <i className="fa fa-upload" aria-hidden="true"></i> Upload
                     </Button>
-                    <Modal isOpen={this.state.isModlaOpen} toggle={this.onToggleModal}>
+                    <Modal isOpen={this.state.isModalOpen} toggle={this.onToggleModal}>
                         <ModalHeader toggle={this.onToggleModal}>Login</ModalHeader>
                         <ModalBody className="mt-3">
                             <Form >
@@ -140,7 +149,7 @@ export default class Catlog extends Component{
                                     <textarea  type="text"  id="description" value={this.state.description }
                                         onChange={(e)=>this.formChange(e)} className="form-control"></textarea>
                                 </FormGroup>
-                                <Button type="submit" color="success" value="submit" onSubmit={(e)=> this.handleSubmit(e)}>Upload</Button>
+                                <Button type="button" color="success" value="submit" onClick={(e)=> this.handleSubmit(e)}>Upload</Button>
                             </Form>
                         </ModalBody>
                     </Modal>
