@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { Table, Button,Modal,ModalHeader,ModalBody,Input,Form,FormGroup, Label } from 'reactstrap';
 
+import sha256 from 'crypto-js/sha256';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import axios from 'axios'
 
 const temp = [
@@ -44,7 +49,10 @@ export default class Send extends Component {
         this.state = {
             isModlaOpen: false,
             data: [],
-            file: null
+            file: null,
+            request_id: '',
+            respondent_id: '',
+            fileHash: '',
         }
         this.onToggleModal = this.onToggleModal.bind(this) ;
         this.formChange = this.formChange.bind(this);
@@ -66,9 +74,10 @@ export default class Send extends Component {
         });
     }
 
-    onToggleModal(){
+    onToggleModal(request_id){
         this.setState(
             {
+                request_id: request_id,
                 isModlaOpen: !this.state.isModlaOpen
                 
             }
@@ -79,18 +88,45 @@ export default class Send extends Component {
 
     handleSubmit()
     {
-            const data = new FormData() 
-            data.append('file', this.state.file);
+            let respondent_id = localStorage.getItem('id');
+            this.setState({ respondent_id: respondent_id }, () =>{
+                const data = new FormData() 
+                data.append('file', this.state.file);
+                
+    
+                axios.post(`http://localhost:3000/api/sendFile`, data)
+                .then( (response)  => {
+                    if(response.status == 200)
+                    {
+                        axios.post(`http://localhost:3000/api/sendFileData`, {request_id: this.state.request_id, respondent_id: this.state.respondent_id, hash: this.state.fileHash })
+                        .then( (response)  => {
+                           
+                           
+                            
+                        })
+                        .catch((error) =>  {
+                            this.setState({
+    
+                                    isModlaOpen: !this.state.isModlaOpen
+                                    
+                                }
+                                
+                            );
+                            
+                            toast("Hash Mismatched")
+                            
+                            }); 
+                    }
+                    
+                })
+                .catch(function (error) {
+                    
+                    console.log(error);
+                }); 
+            }
+            
+        );
            
-            axios.post(`http://localhost:3000/api/sendFile`, data)
-            .then( (response)  => {
-                console.log(response.data)
-                
-            })
-            .catch(function (error) {
-                
-                console.log(error);
-            }); 
     }
 
     formChange(e){
@@ -104,12 +140,12 @@ export default class Send extends Component {
             reader.onloadend = () => {
                 // console.log(reader.result)
                 // let fileHash = sha256(reader.result);
-                let fileHash = "";
+                let fileHash = sha256(reader.result);
                 this.setState({
                     
                     "fileName": fileName,
                     "fileType": fileType,
-                    "fileHash":fileHash.toString()
+                    "fileHash": fileHash.toString()
                 });
             }
             this.setState({
@@ -130,6 +166,7 @@ export default class Send extends Component {
     render(){
         let RowsSend = this.state.data.map((row) =>{
             return (
+                
                 <tr key={row.user_data[0].id}>
                    <td >{row.user_data[0].name}</td> 
                    <td >{row.data[0].fileName}</td>
@@ -138,7 +175,7 @@ export default class Send extends Component {
                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.data[0].description == 'null' ? '-' :  row.data[0].description}</td>
                     
                     <td>
-                        <Button color="success"  onClick={this.onToggleModal}>
+                        <Button color="success"  onClick={() => this.onToggleModal(row.user_data[0].id)}>
                             <i className="fa fa-paper-plane mr-2" aria-hidden="true"></i>
                             Send
                         </Button>
@@ -152,8 +189,7 @@ export default class Send extends Component {
 
         return(
             <div className="mt-5 container ">
-                
-
+                <ToastContainer />
                 <Table className="mt-3 table-striped table-hover table-fit " >
                     <thead className="thead-dark">
                         <tr>
