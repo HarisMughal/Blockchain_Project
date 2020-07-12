@@ -38,7 +38,6 @@ const temp = [
     },
 ]
 
-
 export default class Request extends Component{
     constructor(props){
         super(props);
@@ -107,7 +106,8 @@ fI9mWwGwuAkuA5WVAgMBAAE=\
         let RowsMake = this.state.data.map((row) =>{
             return (
                 <tr key={row.id}>
-                   <td >{row.company_name}</td> 
+                    <td >{row.company_name}</td> 
+                   <td >{row.name}</td> 
                    <td >{row.fileName}</td>
                    <td >{row.fileType}</td>
                    {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
