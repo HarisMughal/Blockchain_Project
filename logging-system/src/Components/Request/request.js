@@ -42,7 +42,15 @@ export default class Request extends Component{
     constructor(props){
         super(props);
         this.state = {
-            data: []
+            data: [],
+            transaction :{
+                request_id:'',
+                respondent_id:'',
+                request_hash: '',
+                data_id: ''
+            }
+           
+            
         }
 
         var crypt = new Crypt();
@@ -102,19 +110,47 @@ fI9mWwGwuAkuA5WVAgMBAAE=\
         });
     }
 
+    handleSend = (data_id, user_id, hash) => {
+
+        let request_id = localStorage.getItem('id');
+
+        this.setState({ transaction : {
+            request_id: request_id,
+            respondent_id:user_id,
+            request_hash: hash,
+            data_id: data_id
+        } }, () => {
+            axios.post(`http://localhost:3000/api/postRequest`, this.state.transaction)
+            .then( (response)  => {
+                console.log(response.data)
+                // this.setState({
+                //     data: response.data
+                // })
+            })
+            .catch(function (error) {
+                
+                console.log(error);
+            });
+        }
+        
+    );
+        
+        
+    }
+
     render(){
         let RowsMake = this.state.data.map((row) =>{
             return (
                 <tr key={row.id}>
-                    <td >{row.company_name}</td> 
-                   <td >{row.name}</td> 
+                    {/* <td >{row.company_name}</td>  */}
+                    <td>{row.company_name}</td>
                    <td >{row.fileName}</td>
                    <td >{row.fileType}</td>
                    {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description}</td>
                     
                     <td>
-                        <Button>
+                        <Button onClick={() => this.handleSend(row.id, row.user_id, row.hash)}>
                             <i class="fa fa-paper-plane mr-2" aria-hidden="true"></i>
                             Send
                         </Button>

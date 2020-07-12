@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Table, Button,Modal,ModalHeader,ModalBody,Input,Form,FormGroup, Label } from 'reactstrap';
 
+import axios from 'axios'
+
 const temp = [
     {
         id:1,
@@ -41,9 +43,27 @@ export default class Send extends Component {
         super(props);
         this.state = {
             isModlaOpen: false,
+            data: [],
+            file: null
         }
         this.onToggleModal = this.onToggleModal.bind(this) ;
         this.formChange = this.formChange.bind(this);
+    }
+
+    componentDidMount()
+    {
+        let user_id = localStorage.getItem('id');
+        axios.get(`http://localhost:3000/api/getSendData/${user_id}`)
+        .then( (response)  => {
+            console.log(response.data)
+            this.setState({
+                data: response.data
+            })
+        })
+        .catch(function (error) {
+            
+            console.log(error);
+        });
     }
 
     onToggleModal(){
@@ -55,6 +75,22 @@ export default class Send extends Component {
             
         );
 
+    }
+
+    handleSubmit()
+    {
+            const data = new FormData() 
+            data.append('file', this.state.file);
+           
+            axios.post(`http://localhost:3000/api/sendFile`, data)
+            .then( (response)  => {
+                console.log(response.data)
+                
+            })
+            .catch(function (error) {
+                
+                console.log(error);
+            }); 
     }
 
     formChange(e){
@@ -70,11 +106,16 @@ export default class Send extends Component {
                 // let fileHash = sha256(reader.result);
                 let fileHash = "";
                 this.setState({
+                    
                     "fileName": fileName,
                     "fileType": fileType,
                     "fileHash":fileHash.toString()
                 });
             }
+            this.setState({
+                    
+                file: e.target.files[0],
+            });
             reader.readAsDataURL(e.target.files[0]);
             
         }else{
@@ -87,14 +128,14 @@ export default class Send extends Component {
     }
 
     render(){
-        let RowsSend = temp.map((row) =>{
+        let RowsSend = this.state.data.map((row) =>{
             return (
-                <tr key={row.id}>
-                   <td >{row.name}</td> 
-                   <td >{row.fileName}</td>
-                   <td >{row.fileType}</td>
+                <tr key={row.user_data[0].id}>
+                   <td >{row.user_data[0].name}</td> 
+                   <td >{row.data[0].fileName}</td>
+                   <td >{row.data[0].fileType}</td>
                    {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
-                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description}</td>
+                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.data[0].description == 'null' ? '-' :  row.data[0].description}</td>
                     
                     <td>
                         <Button color="success"  onClick={this.onToggleModal}>
@@ -116,8 +157,8 @@ export default class Send extends Component {
                 <Table className="mt-3 table-striped table-hover table-fit " >
                     <thead className="thead-dark">
                         <tr>
-                            <th data-field="id" data-sortable="true" scope="col">Requester Name</th>
-                            <th data-field="name" data-sortable="true" scope="col">Requeted File</th>
+                            <th data-field="id" data-sortable="true" scope="col">Requester Company Name</th>
+                            <th data-field="name" data-sortable="true" scope="col">Requested File</th>
                             <th data-field="type" data-sortable="true" scope="col">File Type</th>
                             {/* <th data-field="hash" data-sortable="true" scope="col">File Hash</th> */}
                             <th  scope="col">Description</th>
@@ -133,10 +174,10 @@ export default class Send extends Component {
                             <Form >
                                 <FormGroup>
                                     <Label htmlFor="file" > Select a file</Label>
-                                    <Input required type="file"  id="file" className="btn"  value={this.state.file} 
+                                    <Input required type="file"  id="file" className="btn" 
                                         onChange={(e)=>this.formChange(e)} ></Input>
                                 </FormGroup>
-                                <Button type="submit" color="success" value="submit" onSubmit={(e)=> this.handleSubmit(e)}>Upload</Button>
+                                <Button type="button" color="success" value="submit" onClick={()=> this.handleSubmit()}>Upload</Button>
                             </Form>
                         </ModalBody>
                     </Modal>
