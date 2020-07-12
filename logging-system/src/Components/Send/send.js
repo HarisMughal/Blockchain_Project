@@ -93,7 +93,7 @@ export default class Send extends Component {
                    <td >{row.name}</td> 
                    <td >{row.fileName}</td>
                    <td >{row.fileType}</td>
-                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td>
+                   {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description}</td>
                     
                     <td>
@@ -119,7 +119,7 @@ export default class Send extends Component {
                             <th data-field="id" data-sortable="true" scope="col">Requester Name</th>
                             <th data-field="name" data-sortable="true" scope="col">Requeted File</th>
                             <th data-field="type" data-sortable="true" scope="col">File Type</th>
-                            <th data-field="hash" data-sortable="true" scope="col">File Hash</th>
+                            {/* <th data-field="hash" data-sortable="true" scope="col">File Hash</th> */}
                             <th  scope="col">Description</th>
                             <th scope="col">Options    </th>
                         </tr>
