@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Table, Button } from "react-bootstrap";
 import { Crypt, RSA } from 'hybrid-crypto-js';
-
-
+import axios from 'axios';
 
 const temp = [
     {
@@ -43,6 +42,7 @@ export default class Request extends Component{
     constructor(props){
         super(props);
         this.state = {
+            data: []
         }
 
         var crypt = new Crypt();
@@ -86,8 +86,24 @@ fI9mWwGwuAkuA5WVAgMBAAE=\
           
     }
 
+    componentDidMount()
+    {
+        let user_id = localStorage.getItem('id');
+        axios.get(`http://localhost:3000/api/getOtherData/${user_id}`)
+        .then( (response)  => {
+            console.log(response.data)
+            this.setState({
+                data: response.data
+            })
+        })
+        .catch(function (error) {
+            
+            console.log(error);
+        });
+    }
+
     render(){
-        let RowsMake = temp.map((row) =>{
+        let RowsMake = this.state.data.map((row) =>{
             return (
                 <tr key={row.id}>
                    <td >{row.name}</td> 
@@ -129,11 +145,6 @@ fI9mWwGwuAkuA5WVAgMBAAE=\
                     </tbody>
 
                 </Table>
-                        
-
-
-
-                    
             </div>
         );
     }

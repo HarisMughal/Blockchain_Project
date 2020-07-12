@@ -3,6 +3,11 @@ import { Table, Button,Modal,ModalHeader,ModalBody,Input,Form,FormGroup, Label }
 import "./catlog.css";
 import sha256 from 'crypto-js/sha256';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import axios from 'axios';
+
 
 const temp = [
     {
@@ -36,6 +41,7 @@ const temp = [
 ]
 
 export default class Catlog extends Component{
+    
     constructor(props){
         super(props);
         this.state = {
@@ -43,16 +49,37 @@ export default class Catlog extends Component{
             data_id:0,
             user_id:0,
             description : "",
+            data: [],
+            companyName: ''
             
         };
 
-
-        this.onToggleModal = this.onToggleModal.bind(this) 
-        
+        this.onToggleModal = this.onToggleModal.bind(this)         
         this.handleSubmit = this.handleSubmit.bind(this);
         this.formChange = this.formChange.bind(this);
         
     };
+
+    componentDidMount()
+    {
+        let user_id = localStorage.getItem('id');
+        axios.get(`http://localhost:3000/api/getData/${user_id}`)
+        .then( (response)  => {
+            this.setState({
+                data: response.data
+            })
+        })
+        .catch(function (error) {
+            
+            console.log(error);
+        });
+
+        let company_name = localStorage.getItem('company_name')
+            
+            this.setState({
+                companyName: company_name
+            })
+    }
 
     onToggleModal(id){
         this.setState(
@@ -69,13 +96,80 @@ export default class Catlog extends Component{
     handleSubmit(event){
         // console.log("Insert");
         event.preventDefault();
-        if(this.state.data_id == -1){
-            console.log("Insert");
-        }else{
-            console.log("Upldate");
+        if(this.state.data_id == -1)
+        {
+            let user_id = localStorage.getItem('id');
+            
+            axios.post(`http://localhost:3000/api/uploadData/${user_id}`, this.state)
+            .then( (response)  => {
+                if(response.data.message == "Success") {
+                    this.setState(
+                    {
+                        
+                        isModalOpen: !this.state.isModalOpen
+                        
+                    })
+
+                    toast("Uploaded!")
+
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 500);
+                    
+                    
+                }
+            })
+            .catch(function (error) {
+                
+                console.log(error);
+            });    
         }
         
-        console.log(this.state);
+        
+        else
+        {
+            axios.put(`http://localhost:3000/api/updateData/${this.state.data_id}`, this.state)
+            .then((response) => {
+                if(response.data.message == "Success") {
+                    this.setState(
+                    {                      
+                        isModalOpen: !this.state.isModalOpen                       
+                    })
+
+                    toast("Updated!")
+
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 500);
+                    
+                }
+            })
+            .catch(function (error) {
+                
+                console.log(error);
+            });    
+        }
+        
+    }
+
+     onRowDel(id)
+    {
+        axios.delete(`http://localhost:3000/api/delete/${id}`)
+        .then((response) => {
+            if(response.data.message == "Success") {
+
+                toast("Deleted!")
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 500);
+                
+            }
+        })
+        .catch(function (error) {
+            
+            console.log(error);
+        });   
     }
 
     formChange(e){
@@ -110,22 +204,25 @@ export default class Catlog extends Component{
     
 
     render(){
-        const Rows = temp.map((row) =>{
+        
+        const Rows = this.state.data.map((row) =>{
             return (
-                <tr key={row.id}>
-                   <td >{row.id}</td> 
-                   <td >{row.fileName}</td>
-                   <td >{row.fileType}</td>
-                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td>
-                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description}</td>
-                    
-                    <td>
-                        <i className="fa fa-trash" aria-hidden="true" style={{fontSize:"20px", color:"red",cursor:"pointer"}}
-                          onClick={this.onRowDel}  ></i>
-                        <i className="fa fa-upload ml-3" aria-hidden="true"  style={{cursor:"pointer"}} onClick={()=>this.onToggleModal(row.id)}></i> 
+                <>
+                    <ToastContainer />
+                    <tr key={row.id}>
+                    <td >{row.fileName}</td>
+                    <td >{row.fileType}</td>
+                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td>
+                    <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.description == 'null' ? '-' : row.description }</td>
+                        
+                        <td>
+                            <i className="fa fa-trash" aria-hidden="true" style={{fontSize:"20px", color:"red",cursor:"pointer"}}
+                            onClick={()=>this.onRowDel(row.id)}  ></i>
+                            <i className="fa fa-upload ml-3" aria-hidden="true"  style={{cursor:"pointer"}} onClick={()=>this.onToggleModal(row.id)}></i> 
 
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                </>
             );
         }) 
         return(
@@ -160,7 +257,6 @@ export default class Catlog extends Component{
                 <Table className="mt-3 table-striped table-hover table-fit " >
                     <thead className="thead-dark">
                         <tr>
-                            <th data-field="id" data-sortable="true" scope="col">id</th>
                             <th data-field="name" data-sortable="true" scope="col">File Name</th>
                             <th data-field="type" data-sortable="true" scope="col">File Type</th>
                             <th data-field="hash" data-sortable="true" scope="col">File Hash</th>

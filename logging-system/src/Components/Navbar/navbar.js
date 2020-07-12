@@ -2,10 +2,18 @@ import React from 'react';
 import {Navbar,NavbarBrand, NavbarToggler, Nav,NavItem, Button} from 'reactstrap';
 import { NavLink } from 'react-router-dom';
 
+import {
+    withRouter,
+    Redirect,
+  } from "react-router";
 
+function NavBar({history}){
 
+    const handleLogout = () => {
 
-function NavBar(){
+        history.push('/login');
+        localStorage.clear();
+    }
     return(
         <Navbar dark expand="md" className="bg-primary" >
             <NavbarBrand>DataLedger</NavbarBrand>
@@ -33,7 +41,7 @@ function NavBar(){
             </div>
             <Nav className='ml-auto'>
                     <NavItem>
-                        <Button outline color="light" > 
+                        <Button type="button" outline color="light" onClick={handleLogout}> 
                             
                             Logout
                         </Button>
@@ -47,7 +55,7 @@ function NavBar(){
 }
 
 
-export default NavBar;
+export default withRouter(NavBar);
 
 
 

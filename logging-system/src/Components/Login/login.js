@@ -1,6 +1,10 @@
 import React ,{Component } from "react";
 import {Card,Form,Button} from "react-bootstrap";
 
+import axios from 'axios';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class Login extends Component{
 
@@ -22,15 +26,46 @@ export default class Login extends Component{
 
     formSubmit(event){
         event.preventDefault();
+
+        const { history } = this.props;
+        
         // console.log(this.state.email);
         // console.log(this.state.password);
-        this.props.history.push("/home");
 
+        axios.post('http://localhost:3000/api/login', this.state)
+      .then(function (response) {
+       
+        if(response.data == "Incorrect Username and/or Password!" ) {
+            toast(response.data)
+            
+        }
+
+        else if(response.data == "Please enter Username and Password!")
+        {
+            toast(response.data)
+        }
+
+        else
+        {
+            localStorage.setItem('id', response.data[0].id);
+            localStorage.setItem('email', response.data[0].email);
+            localStorage.setItem('company_name', response.data[0].name);
+            localStorage.setItem('public_key', response.data[0].public_key);
+
+            history.push("/home")
+            
+        }
+      })
+      .catch(function (error) {
+        
+        console.log(error);
+      });
     }
 
     render(){
         return (
             <div className="container-fluid " style={{height:"100vh",backgroundImage: `linear-gradient(135deg, #000000 5%, #115E6780 90%), url(${"assets/images/bg.jpg"}) `, backgroundSize:"cover"}}>
+                <ToastContainer />
                 <div className="row  justify-content-center ">
                     <div className="col-10 col-md-6 col-xl-4"> 
                         <Card style={{top:"20vh", borderRadius:"10px",
