@@ -28,6 +28,13 @@ function NavBar(){
                             Send Data
                         </NavLink>
                     </NavItem>
+                    <NavItem >
+                        <NavLink className="nav-link mx-4" exact to = "/home/received">
+                            Data Received
+                        </NavLink>
+                    </NavItem>
+
+
                 </Nav>
                 
             </div>

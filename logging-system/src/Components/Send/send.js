@@ -98,7 +98,7 @@ export default class Send extends Component {
                     
                     <td>
                         <Button color="success"  onClick={this.onToggleModal}>
-                            <i class="fa fa-paper-plane mr-2" aria-hidden="true"></i>
+                            <i className="fa fa-paper-plane mr-2" aria-hidden="true"></i>
                             Send
                         </Button>
 
