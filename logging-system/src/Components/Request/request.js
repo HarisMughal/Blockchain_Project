@@ -126,6 +126,29 @@ fI9mWwGwuAkuA5WVAgMBAAE=\
                 // this.setState({
                 //     data: response.data
                 // })
+                axios.post(`http://192.168.131.134:3000/api/Commodity`, {
+                    "$class": "org.example.mynetwork.Commodity",
+                    "tradingSymbol": hash,
+                    "asset_id": hash,
+                    "requester_id": request_id,
+                    "respondent_id": user_id,
+                    "request_hash": hash,
+                    "response_hash": "null",
+                    "is_request": "true",
+                    "verification": "null",
+                    "owner": "org.example.mynetwork.Trader#".concat(user_id)
+                })
+                .then( (response)  => {
+                    console.log("hyperledger success");
+                    console.log(response.data)
+                    // this.setState({
+                    //     data: response.data
+                    // })
+                    
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             })
             .catch(function (error) {
                 

@@ -36,11 +36,11 @@ function NavBar({history}){
                             Send Data
                         </NavLink>
                     </NavItem>
-                    <NavItem >
+                    {/* <NavItem >
                         <NavLink className="nav-link mx-4" exact to = "/home/received">
                             Data Received
                         </NavLink>
-                    </NavItem>
+                    </NavItem> */}
 
 
                 </Nav>

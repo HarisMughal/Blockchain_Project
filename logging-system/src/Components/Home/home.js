@@ -26,7 +26,7 @@ export default class Home extends Component{
                     
                     <Route path='/home/requests' component={Request}/>
                     <Route path='/home/send' component={Send}/>
-                    <Route path='/home/received' component={Received} />
+                    {/* <Route path='/home/received' component={Received} /> */}
                     <Redirect to="/home"/>
                 </Switch>
             </div>

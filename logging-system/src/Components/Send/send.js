@@ -56,17 +56,18 @@ export default class Send extends Component {
         }
         this.onToggleModal = this.onToggleModal.bind(this) ;
         this.formChange = this.formChange.bind(this);
+
     }
 
-    componentDidMount()
+    componentWillMount()
     {
         let user_id = localStorage.getItem('id');
         axios.get(`http://localhost:3000/api/getSendData/${user_id}`)
         .then( (response)  => {
-            console.log(response.data)
             this.setState({
                 data: response.data
             })
+            console.log(this.state.data)
         })
         .catch(function (error) {
             
@@ -101,7 +102,47 @@ export default class Send extends Component {
                         axios.post(`http://localhost:3000/api/sendFileData`, {request_id: this.state.request_id, respondent_id: this.state.respondent_id, hash: this.state.fileHash })
                         .then( (response)  => {
                            
-                           
+                            this.setState({
+        
+                                isModlaOpen: !this.state.isModlaOpen
+                                
+                            }
+                            
+                            );
+                        
+                            toast("Data Send")
+                            // axios.post(`http://192.168.131.134:3000/api/Trade`, 
+                            // {
+                            //     "$class": "org.example.mynetwork.Trade",
+                            //     "commodity": "org.example.mynetwork.Commodity#".concat(this.state.fileHash),
+                            //     "newOwner": "org.example.mynetwork.Trader#".concat(this.state.request_id)
+                            // }
+                            // )
+                            // .then( (response)  => {
+                               
+                            //     // this.setState({
+        
+                            //     //     isModlaOpen: !this.state.isModlaOpen
+                                    
+                            //     // }
+                                
+                            //     // );
+                            
+                            //     // toast("Data Send")
+                                
+                            // })
+                            // .catch((error) =>  {
+                            //     this.setState({
+        
+                            //             isModlaOpen: !this.state.isModlaOpen
+                                        
+                            //         }
+                                    
+                            //     );
+                                
+                            //     toast("Hash Mismatched")
+                                
+                            // }); 
                             
                         })
                         .catch((error) =>  {
@@ -115,7 +156,7 @@ export default class Send extends Component {
                             
                             toast("Hash Mismatched")
                             
-                            }); 
+                        }); 
                     }
                     
                 })
@@ -164,29 +205,32 @@ export default class Send extends Component {
     }
 
     render(){
-        let RowsSend = this.state.data.map((row) =>{
-            return (
-                
-                <tr key={row.user_data[0].id}>
-                   <td >{row.user_data[0].name}</td> 
-                   <td >{row.data[0].fileName}</td>
-                   <td >{row.data[0].fileType}</td>
-                   {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
-                   <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.data[0].description == 'null' ? '-' :  row.data[0].description}</td>
-                    
-                    <td>
-                        <Button color="success"  onClick={() => this.onToggleModal(row.user_data[0].id)}>
-                            <i className="fa fa-paper-plane mr-2" aria-hidden="true"></i>
-                            Send
-                        </Button>
 
-
-                    </td>
-                </tr>
-            );
-        }) 
+        // console.log(this.state);
+        let RowsSend;
+        if(this.state.data.length > 0){
+            RowsSend = this.state.data.map((row) =>{
+                return (
+                    <tr>
+                        <td >{row.user_data.name}</td> 
+                        <td >{row.data.fileName}</td>
+                        <td >{row.data.fileType}</td>
+                        {/* <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.hash}</td> */}
+                        <td style={{maxWidth:"250px",wordBreak:"break-all"}}>{row.data.description == 'null' ? '-' :  row.data.description}</td>
+                        
+                        <td>
+                            <Button color="success"  onClick={() => this.onToggleModal(row.user_data.id)}>
+                                <i className="fa fa-paper-plane mr-2" aria-hidden="true"></i>
+                                Send
+                            </Button>
+    
+    
+                        </td>
+                    </tr>
+                );
+            }) 
+        }
         
-
         return(
             <div className="mt-5 container ">
                 <ToastContainer />
@@ -219,12 +263,8 @@ export default class Send extends Component {
                     </Modal>
 
                 </Table>
-                        
-
-
-
-                    
             </div>
         )
+
     }
 }
